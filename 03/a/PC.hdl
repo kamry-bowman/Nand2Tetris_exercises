@@ -14,7 +14,13 @@
 CHIP PC {
     IN in[16],load,inc,reset;
     OUT out[16];
-
     PARTS:
-    // Put your code here:
+    Or(a=reset, b=load, out=zy);
+    Or(a=inc, b=load, out=incOrLoad);
+    Not(in=incOrLoad, out=notIncOrLoad);
+    Or(a=notIncOrLoad, b=reset, out=zx);
+    Mux16(a[0]=true, b=in, sel=load, out=inOr1);
+    ALU(x=inOr1, y=savedout, zx=zx, nx=false, zy=zy, ny=false, f=true, no=false, out=ALUoutput);
+    Register(in=ALUoutput, load=true, out=out, out=savedout);
 }
+
